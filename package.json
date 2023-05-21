@@ -1,0 +1,28 @@
+{
+  "name": "midjourney",
+  "version": "1.0.0",
+  "description": "simple discord bot",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "npm run start:bot",
+    "dev": "nodemon --inspect --watch src --exec ts-node index.ts",
+    "start:bot": "npm run build && node --enable-source-maps dist/index.js",
+    "build": "tsc --project tsconfig.json"
+  },
+  "keywords": [],
+  "author": "blacky",
+  "license": "GPL-3.0",
+  "signale": {
+    "displayScope": true,
+    "displayBadge": true,
+    "displayDate": true,
+    "displayFilename": true,
+    "displayLabel": true,
+    "displayTimestamp": true,
+    "underlineLabel": true
+  },
+  "dependencies": {
+    "@discordjs/core": "^0.6.0",
+    "undici": "^5.22.1"
+  }
+}
