@@ -1,17 +1,17 @@
-import { Event, Bot, GatewayDispatchEvents } from '../../structures/index.js';
+import { Event, Bot, EventsTypes } from '../../structures/index.js';
 
 
-export default class Ready extends Event  {
+export default class ClientReady extends Event  {
     constructor(client: Bot, file: string) {
         super(client, file, {
-            name: GatewayDispatchEvents.Ready,
+            name: EventsTypes.ClientReady,
         });
     }
     public async run(): Promise<void> {
         this.client.logger.info(`Connected to Discord as ${this.client.user?.tag}!`);
-
+        
         this.client.user?.setActivity({
-            name: 'with discord.js',
+            name: '/imagine',
             type: 3,
         });
     }

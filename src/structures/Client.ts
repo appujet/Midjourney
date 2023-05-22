@@ -15,24 +15,31 @@ import { fileURLToPath } from 'url';
 import config from '../config.js';
 import Logger from './Logger.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import Replicate from 'replicate';
+import { Canvas } from './Canvas.js';
 
 
 export default class Bot extends Client {
     public config: typeof config;
     public logger = new Logger();
     public commands = new Collection<string, any>();
-    public rest = new REST({ version: '9' }).setToken(config.token);
     private data: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
-    public embed = new EmbedBuilder().setColor(config.color as any);
+    public replicate = new Replicate({
+        auth: config.replicateToken
+    });
+    public canvas: Canvas = new Canvas();
     constructor(options: ClientOptions) {
         super(options);
         this.config = config;
     }
     public async start(token: string) {
         this.logger.start('Starting bot...');
-        await this.LoadEvents();
         await this.LoadCommands();
+        await this.LoadEvents();
         await this.login(token);
+    }
+    public embed(): EmbedBuilder {
+        return new EmbedBuilder().setColor(this.config.color as any);
     }
     private async LoadEvents(): Promise<void> {
         const events = fs.readdirSync(path.join(__dirname, '../events'));
@@ -41,8 +48,6 @@ export default class Bot extends Client {
             for (const file of eventFiles) {
                 const eventFile = (await import(`../events/${event}/${file}`)).default;
                 const eventClass = new eventFile(this, file);
-                eventClass.fileName = file.split('.')[0];
-                eventClass.file = file;
                 this.on(eventClass.name, (...args: any[]) => eventClass.run(...args));
             }
         }
@@ -78,7 +83,7 @@ export default class Bot extends Client {
             this.once('ready', async () => {
                 const applicationCommands = Routes.applicationCommands(this.config.clientId ?? '');
                 try {
-                    const rest = new REST({ version: '10' }).setToken(this.config.token ?? '');
+                    const rest = new REST({ version: '9' }).setToken(this.config.token ?? '');
                     await rest.put(applicationCommands, { body: this.data });
                     this.logger.info(`Successfully loaded slash commands!`);
                 } catch (error) {

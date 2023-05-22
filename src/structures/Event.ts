@@ -1,6 +1,5 @@
 import { Bot } from "./index.js";
 
-
 export default class Event {
     public client: Bot;
     public one: boolean;
@@ -14,7 +13,7 @@ export default class Event {
         this.one = options.one || false;
         this.fileName = file.split('.')[0];
     }
-    public async run(...args: any[]): Promise<any> {
+    public async run(...args: any[]): Promise<void> {
         return Promise.resolve();
     }
 }
