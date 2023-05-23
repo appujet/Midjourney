@@ -58,7 +58,7 @@ export default class Imagine extends Command {
         const rowImg = await client.canvas.mergeImages({
             width: 1000,
             height: 1000,
-            images: prediction as string[]
+            images: prediction,
         });
         const attachment = new AttachmentBuilder(rowImg)
             .setName('imagine.png');
@@ -67,19 +67,9 @@ export default class Imagine extends Command {
                 ...prediction.map((_, i) => new ButtonBuilder()
                     .setLabel(`${i + 1}`)
                     .setStyle(ButtonStyle.Link)
-                    .setURL(prediction[i])),
-                new ButtonBuilder()
-                    .setCustomId('refresh')
-                    .setEmoji('🔄')
-                    .setStyle(ButtonStyle.Primary)
+                    .setURL(prediction[i]))
         );
-        const row2 = new ActionRowBuilder<ButtonBuilder>()
-            .addComponents(
-                new ButtonBuilder()
-                    .setLabel("Get more prompt")
-                    .setStyle(ButtonStyle.Link)
-                    .setURL('https://prompthero.com/openjourney-prompts')
-        )
-        await interaction.editReply({ files: [attachment], components: [row, row2] })
+        
+        await interaction.editReply({ files: [attachment], components: [row] })
     }
 }
