@@ -21,6 +21,10 @@ export default class InteractionCreate extends Event {
             if (interaction.customId === 'refresh') {
                 const { guild, message } = interaction;
                 if (!guild || !message) return;
+                if (interaction.user.id !== message.author.id) {
+                    await interaction.reply({ content: 'You can\'t refresh this message!', ephemeral: true });
+                    return;
+                }
                 await interaction.deferUpdate({ fetchReply: true });
                 
                 function filterWord(content: string): string {
@@ -38,7 +42,7 @@ export default class InteractionCreate extends Event {
                         prompt: content,
                         num_outputs: 4,
                     },
-                });
+                }) as string[];
                 const rowImg = await this.client.canvas.mergeImages({
                     width: 1000,
                     height: 1000,
@@ -48,27 +52,15 @@ export default class InteractionCreate extends Event {
                     .setName('imagine.png');
                 const row = new ActionRowBuilder<ButtonBuilder>()
                     .addComponents(
-                        new ButtonBuilder()
-                            .setLabel('1')
+                        ...prediction.map((_, i) => new ButtonBuilder()
+                            .setLabel(`${i + 1}`)
                             .setStyle(ButtonStyle.Link)
-                            .setURL(prediction[0]),
-                        new ButtonBuilder()
-                            .setLabel('2')
-                            .setStyle(ButtonStyle.Link)
-                            .setURL(prediction[1]),
-                        new ButtonBuilder()
-                            .setLabel('3')
-                            .setStyle(ButtonStyle.Link)
-                            .setURL(prediction[2]),
-                        new ButtonBuilder()
-                            .setLabel('4')
-                            .setStyle(ButtonStyle.Link)
-                            .setURL(prediction[3]),
+                            .setURL(prediction[i])),
                         new ButtonBuilder()
                             .setCustomId('refresh')
                             .setEmoji('🔄')
                             .setStyle(ButtonStyle.Primary)
-                );
+                    );
                 const row2 = new ActionRowBuilder<ButtonBuilder>()
                     .addComponents(
                         new ButtonBuilder()

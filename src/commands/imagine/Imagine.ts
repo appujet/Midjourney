@@ -26,7 +26,19 @@ export default class Imagine extends Command {
                     description: 'The prompt to use',
                     type: 3,
                     required: true
-                }
+                },
+                {
+                    name: 'negative-prompt',
+                    description: 'The negative prompt to use',
+                    type: 3,
+                    required: false
+                },
+                {
+                    name: 'num-outputs',
+                    description: 'The number of outputs to generate',
+                    type: 4,
+                    required: false
+                },
             ]
         });
     }
@@ -39,9 +51,10 @@ export default class Imagine extends Command {
         const prediction = await client.replicate.run(this.client.config.model, {
             input: {
                 prompt: prompt,
-                num_outputs: 4,
+                num_outputs: interaction.options.data[2] ? interaction.options.data[2].value as number : 4,
+                negative_prompt: interaction.options.data[1]?.value as string
             },
-        });
+        }) as string[];
         const rowImg = await client.canvas.mergeImages({
             width: 1000,
             height: 1000,
@@ -51,22 +64,10 @@ export default class Imagine extends Command {
             .setName('imagine.png');
         const row = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
-                new ButtonBuilder()
-                    .setLabel('1')
+                ...prediction.map((_, i) => new ButtonBuilder()
+                    .setLabel(`${i + 1}`)
                     .setStyle(ButtonStyle.Link)
-                    .setURL(prediction[0]),
-                new ButtonBuilder()
-                    .setLabel('2')
-                    .setStyle(ButtonStyle.Link)
-                    .setURL(prediction[1]),
-                new ButtonBuilder()
-                    .setLabel('3')
-                    .setStyle(ButtonStyle.Link)
-                    .setURL(prediction[2]),
-                new ButtonBuilder()
-                    .setLabel('4')
-                    .setStyle(ButtonStyle.Link)
-                    .setURL(prediction[3]),
+                    .setURL(prediction[i])),
                 new ButtonBuilder()
                     .setCustomId('refresh')
                     .setEmoji('🔄')

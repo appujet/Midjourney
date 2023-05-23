@@ -39,6 +39,7 @@
     "canvas": "^2.11.2",
     "discord.js": "^14.9.0",
     "replicate": "^0.12.1",
-    "signale": "^1.4.0"
+    "signale": "^1.4.0",
+    "undici": "^5.22.1"
   }
 }

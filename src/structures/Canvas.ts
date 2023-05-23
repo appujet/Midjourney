@@ -1,10 +1,13 @@
 import { createCanvas, loadImage } from 'canvas';
+import { request } from 'undici';
+import fs from 'fs';
 
 interface MergeImagesOptions {
     width: number;
     height: number;
     images: string[];
 }
+
 export class Canvas {
     public async mergeImages(options: MergeImagesOptions): Promise<Buffer> {
         // count the number of images
@@ -21,9 +24,26 @@ export class Canvas {
         // load all images, draw them to canvas
         const promises = [];
         for (let i = 0; i < imageCount; i++) {
-            promises.push(loadImage(options.images[i]).then((image) => {
-                ctx.drawImage(image, (i % cols) * chunkWidth, Math.floor(i / cols) * chunkHeight, chunkWidth, chunkHeight);
-            }));
+            let { buffer, status } = await request(options.images[i]).then(async r => {
+                return {
+                    buffer: await r.body.arrayBuffer(),
+                    status: r.statusCode,
+                };
+            });
+            if (status !== 200) {
+                const response = await request(options.images[i]) as any;
+                buffer = await response.body.arrayBuffer();
+                status = response.status;
+            }
+            if (status === 200) {
+                const tempFilePath = `temp${i}.tmp`;
+                fs.writeFileSync(tempFilePath, Buffer.from(buffer));
+                const image = await loadImage(tempFilePath);
+                const x = (i % cols) * chunkWidth;
+                const y = Math.floor(i / cols) * chunkHeight;
+                promises.push(ctx.drawImage(image, x, y, chunkWidth, chunkHeight));
+                fs.unlinkSync(tempFilePath); // Remove the temporary file
+            }
         }
         await Promise.all(promises);
         // return the canvas
