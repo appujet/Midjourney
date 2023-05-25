@@ -1,4 +1,4 @@
-import { ActionRowBuilder, AttachmentBuilder, Interaction, InteractionType, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import { Event, Bot, EventsTypes } from '../../structures/index.js';
 
 export default class InteractionCreate extends Event {
@@ -7,15 +7,15 @@ export default class InteractionCreate extends Event {
             name: EventsTypes.InteractionCreate,
         });
     }
-    public async run(interaction: Interaction): Promise<void> {
-        if (interaction.type === InteractionType.ApplicationCommand) {
+    public async run(interaction: CommandInteraction): Promise<void> {
+        if (interaction.isCommand()) {
             const command = this.client.commands.get(interaction.commandName);
             if (!command) return;
             try {
                 await command.run(this.client, interaction);
             } catch (error) {
                 this.client.logger.error(error);
-                interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+                await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
             }
         }
     }
