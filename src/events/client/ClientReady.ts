@@ -1,5 +1,5 @@
 import { Event, Bot, EventsTypes } from '../../structures/index.js';
-
+import { ActivityType } from 'discord.js';
 
 export default class ClientReady extends Event  {
     constructor(client: Bot, file: string) {
@@ -12,7 +12,7 @@ export default class ClientReady extends Event  {
         
         this.client.user?.setActivity({
             name: '/imagine',
-            type: 3,
+            type: ActivityType.Watching
         });
     }
 }
