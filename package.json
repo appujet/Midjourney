@@ -37,9 +37,9 @@
   },
   "dependencies": {
     "canvas": "^3.2.1",
-    "discord.js": "^14.9.0",
+    "discord.js": "^14.27.0",
     "replicate": "^0.12.1",
     "signale": "^1.4.0",
-    "undici": "^6.24.0"
+    "undici": "^6.28.1"
   }
 }
