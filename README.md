@@ -3,13 +3,13 @@
 
 ## Installation
 
-[x] Create Discord Bot and get token and client id from [Discord Developer Portal](https://discord.com/developers/applications)
+- Create Discord Bot and get token and client id from [Discord Developer Portal](https://discord.com/developers/applications)
 
-[x] Download [Node.js](https://nodejs.org/en/download/)
+- Download [Node.js](https://nodejs.org/en/download/)
 
-[x] Create [Replicate](https://replicate.com/) account and get token
+- Create [Replicate](https://replicate.com/) account and get token
 
-[x] Download Midjourney
+- Download Midjourney
 
 ```bash
 git clone https://github.com/brblacky/Midjourney.git
@@ -18,7 +18,7 @@ npm install
 ```
 ## Configuration
 
-[x] Edit `config.ts` file
+- Edit `config.ts` file
 
 ```ts
 export default {
